@@ -10,10 +10,10 @@ class SimpleBean extends BannerEntity{
 
   @override
   // TODO: implement bannerTitle
-  get bannerTitle => url;
+  get bannerTitle => title;
 
   @override
   // TODO: implement bannerUrl
-  get bannerUrl => title;
+  get bannerUrl => url;
 
 }

@@ -18,12 +18,19 @@ class TemplateView extends StatefulWidget {
   //动画持续时间
   final Duration animationDuration;
 
+  //banner 宽高
+  final double bannerWidth;
+
+  final double bannerHeight;
+
   const TemplateView(
     this.lists, {
     Key key,
     this.onBannerPos,
     this.intervalDuration = const Duration(milliseconds: 5000),
     this.animationDuration = const Duration(milliseconds: 1000),
+    this.bannerWidth = 0,
+    this.bannerHeight = 0,
   }) : super(key: key);
 
   @override
@@ -34,22 +41,34 @@ class _TemplateViewState extends State<TemplateView> {
   //指示器下标
   int _indicatorIndex = 0;
 
+  double width;
+
+  double height;
+
   //页面改变
   void onPageChanged(int index) {
     setState(() {
       _indicatorIndex = index;
-      onPageChanged(index);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return _bannerView(context);
+    width = MediaQuery.of(context).size.width;
+    height = width / 2;
+    if (widget.bannerWidth > 0) {
+      width = widget.bannerWidth;
+    }
+    if (widget.bannerHeight > 0) {
+      height = widget.bannerHeight;
+    }
+    return Column(
+      children: <Widget>[_bannerView(context)],
+    );
   }
 
   Widget _bannerView(BuildContext context) {
     List<Widget> swiperWidgetList = [];
-    double width = MediaQuery.of(context).size.width;
     //默认图片
     Widget defaultImage = Image.asset(
       "images/default_cover.png",
@@ -58,30 +77,28 @@ class _TemplateViewState extends State<TemplateView> {
     );
     //绘制图片
     widget.lists.forEach((item) {
-      double width = MediaQuery.of(context).size.width;
-      Widget defaultImage = Image.asset(
-        "images/default_cover.png",
-        fit: BoxFit.cover,
-        width: width,
-      );
-      Widget image = defaultImage;
+      Widget bannerView = defaultImage;
+
       if (!StringUtils.isEmpty(item.bannerUrl)) {
-        image = CachedNetworkImage(
-                width: width,
-                fit: BoxFit.cover,
-                placeholder: (BuildContext context, String url) {
-                  return defaultImage;
-                },
-                errorWidget: (BuildContext context, String url, Object error) {
-                  return defaultImage;
-                },
-                imageUrl: item.bannerUrl);
+        bannerView = Image.network(
+          item.bannerUrl,
+          fit: BoxFit.cover,
+          width: width,
+        );
       }
 
       Stack stack = Stack(
         children: <Widget>[
-          image,
-
+          bannerView,
+          Material(
+            child: InkWell(
+              onTap: () {
+                print("点击:$_indicatorIndex");
+                widget.onBannerPos(_indicatorIndex);
+              },
+            ),
+            type: MaterialType.transparency,
+          )
         ],
       );
       swiperWidgetList.add(stack);
@@ -94,15 +111,30 @@ class _TemplateViewState extends State<TemplateView> {
           onPageChanged: onPageChanged,
         ),
         Align(
-          alignment: Alignment.topRight,
+          alignment: Alignment.bottomCenter,
           child: _getSwiperIndicator(),
         ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: EdgeInsets.all(5.0),
+            width: MediaQuery.of(context).size.width,
+            color: Colors.black54,
+            child: Text(
+              widget.lists[_indicatorIndex].bannerTitle,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.0,
+                  decoration: TextDecoration.none),
+            ),
+          ),
+        )
       ],
     );
 
     return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width / 2,
+      width: width,
+      height: height,
       child: stack,
     );
   }
