@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'AppNavigator.dart';
-import 'BannerView.dart';
+import 'package:flutter_app/common/AppNavigator.dart';
+import 'CustomLayout.dart';
+import 'package:flutter_app/view/TemplateView.dart';
+
+import 'TemplateLayout.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,14 +32,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,15 +43,18 @@ class _MyHomePageState extends State<MyHomePage> {
         body: Column(
           children: <Widget>[
             RaisedButton(
-              child: InkWell(
-                child: Text(
-                  "普通banner",
-                ),
-                onTap: () {
-                  AppNavigator.push(context, BannerView());
-                },
+              child: Text(
+                "自定义banner",
               ),
-            )
+              onPressed: () {
+                AppNavigator.push(context, BannerView());
+              },
+            ),
+            RaisedButton(
+                child: Text("模板"),
+                onPressed: () {
+                  AppNavigator.push(context, TemplateLayout());
+                })
           ],
         ));
   }

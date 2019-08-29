@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'view/AutoScrollPageView.dart';
 
+
+/**
+ * 需要自己传widget给滚动列表
+ * 高度自定义
+ */
 class BannerView extends StatefulWidget {
   @override
   _BannerViewState createState() => _BannerViewState();
